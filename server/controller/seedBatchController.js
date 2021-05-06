@@ -20,7 +20,7 @@ module.exports = {
             })
             .catch(err => res.json(err))
     },
-    findAllSeedBatches: function (req, res) {
+    getAllSeedBatches: function (req, res) {
         const searchObject = req.body;
         console.log('searchObject find all: ', searchObject);
         SeedBatch.find(searchObject)

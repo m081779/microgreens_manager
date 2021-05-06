@@ -95,6 +95,8 @@ module.exports = {
     '~/serverMiddleware/ok',
     '~/serverMiddleware/getAllGrowCycles',
     '~/serverMiddleware/createNewGrowCycle',
+    '~/serverMiddleware/getAllSeedBatches',
+    '~/serverMiddleware/createNewSeedBatch',
   ],
 
 }
