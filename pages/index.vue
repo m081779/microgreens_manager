@@ -22,16 +22,41 @@
               <v-toolbar-title>Create new grow cycle</v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
-
             <CreateGrowCycle />
           </v-card>
         </v-dialog>
       </v-col>
       <v-col cols="3">
-        <v-btn color="yellow" class="black--text">
-          <v-icon>{{ mdiSeed }}</v-icon>
-          &nbsp; New Seed Batch
-        </v-btn>
+        <v-dialog
+          v-model="seedBatchModal"
+          fullscreen
+          hide-overlay
+          transition="dialog-bottom-transition"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="yellow" class="black--text" v-bind="attrs" v-on="on">
+              <v-icon>{{ mdiSeed }}</v-icon>
+              &nbsp; New Seed Batch
+            </v-btn>
+          </template>
+          <v-card>
+            <v-toolbar dark color="yellow">
+              <v-btn
+                icon
+                dark
+                @click="seedBatchModal = false"
+                class="black--text"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+              <v-toolbar-title class="black--text"
+                >Create new seed batch</v-toolbar-title
+              >
+              <v-spacer></v-spacer>
+            </v-toolbar>
+            <CreateSeedBatch />
+          </v-card>
+        </v-dialog>
       </v-col>
       <v-col cols="3">
         <v-btn color="blue">
@@ -60,6 +85,7 @@ import { Component, Vue, namespace, State } from 'nuxt-property-decorator'
 import axios from 'axios'
 import { GrowCycle, SeedBatch } from '~/types/types'
 import CreateGrowCycle from '~/components/CreateGrowCycle.vue'
+import CreateSeedBatch from '~/components/CreateSeedBatch.vue'
 import GrowCycleCard from '~/components/GrowCycleCard.vue'
 import {
   mdiPlusThick,
@@ -73,7 +99,8 @@ import moment from 'moment'
 @Component({
   components: {
     CreateGrowCycle,
-    GrowCycleCard
+    GrowCycleCard,
+    CreateSeedBatch
   }
 })
 export default class Index extends Vue {
@@ -85,41 +112,39 @@ export default class Index extends Vue {
   public mdiWateringCanOutline = mdiWateringCanOutline
   public mdiThermometerPlus = mdiThermometerPlus
 
-  public growCycles = [] as GrowCycle[]
+  public get growCycles () {
+    return this.$store.state.growCycle.growCycles
+  }
+  public set growCycles (growCycles: GrowCycle[]) {
+    this.$store.commit('growCycle/add', growCycles)
+  }
   public seedBatches = [] as SeedBatch[]
   public growCycleModal = false
+  public seedBatchModal = false
 
-  created () {
-    this.getGrowCycles()
+  async created () {
+    await Promise.all([this.getGrowCycles(), this.getSeedBatches()])
   }
 
   async getGrowCycles (this: Index) {
     await axios
       .get('/api/getAllGrowCycles')
       .then(result => {
-        console.log('result from getGrowCycles: ', result)
         this.growCycles = (result.data as GrowCycle[]).map(cycle => ({
           ...cycle,
           startDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm')
         }))
-        console.log(' this.growCycles: ', this.growCycles)
       })
       .catch(error => console.log('error'))
   }
 
-  // async getSeedBatches (this: Index) {
-  //   await axios
-  //     .get('/api/getAllSeedBatches')
-  //     .then(result => {
-  //       console.log('result from getSeedBatches: ', result)
-  //       this.seedBatches = result.data as SeedBatch[]
-  //       // .map(cycle => ({
-  //       //   ...cycle,
-  //       //   startDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm')
-  //       // }))
-  //       console.log(' this.SeedBatches: ', this.seedBatches)
-  //     })
-  //     .catch(error => console.log('error'))
-  // }
+  async getSeedBatches (this: Index) {
+    await axios
+      .get('/api/getAllSeedBatches')
+      .then(result => {
+        this.seedBatches = result.data as SeedBatch[]
+      })
+      .catch(error => console.log('error'))
+  }
 }
 </script>
