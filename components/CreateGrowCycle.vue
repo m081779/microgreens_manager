@@ -182,10 +182,6 @@ export default class CreateGrowCycle extends Vue {
   public mdiSproutOutline = mdiSproutOutline
   public mdiSendCheck = mdiSendCheck
 
-  // @State('description') descriptionOnStore!: RootState['description']
-  // @SettingStore.Action(actionType.TOGGLE_DARK_MODE)
-  // toggleDarkMode!: () => void
-  // @SettingStore.State('darkMode') isDarkMode!: SettingState['darkMode']
   public seedTypes = seedTypes
   public varieties = varieties
   public seedMediums = seedMediums
@@ -246,7 +242,6 @@ export default class CreateGrowCycle extends Vue {
     await axios
       .post('/api/createNewGrowCycle', newGrowCycle)
       .then(result => {
-        console.log('result: ', result)
         this.growCycles = [...this.growCycles, result.data]
       })
       .catch(error =>
@@ -254,14 +249,6 @@ export default class CreateGrowCycle extends Vue {
       )
   }
 
-  // message = "I'm defined on data()"
-  // fetchedTodos: ToDo[] = []
-  // asyncMessage = 'I will be overwritten by asyncData'
-  // userAgent = 'I will be overwritten by asyncData'
-
-  // get computedMessage(): string {
-  // 	return this.message.replace('data()', 'computed()')
-  // }
   public handleReset () {
     this.success = null
     ;(this.$refs.form as any).reset()

@@ -3,10 +3,8 @@ const SeedBatch = require('../models/seedBatch')
 
 module.exports = {
     createNewGrowCycle: function (req, res) {
-        console.log('req.body: ', req.body);
         GrowCycle.create(req.body)
             .then(result => {
-                console.log('result from createNewGrowCycle: ', result);
                 res.status(201).json(result)
             })
             .catch(err => res.json(err))

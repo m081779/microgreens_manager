@@ -340,7 +340,6 @@ export default class ViewEditGrowCycle extends Vue {
     await axios
       .post('/api/createNewGrowCycle', newGrowCycle)
       .then(result => {
-        console.log('result: ', result)
         this.growCycles = [...this.growCycles, result.data]
       })
       .catch(error =>
