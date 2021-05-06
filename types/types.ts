@@ -24,24 +24,25 @@ export interface GrowCycle {
 }
 
 export interface SeedBatch {
-  purchasedFrom: string
   seedType: SeedTypes
   variety: Varieties
+  brand: string
+  purchasedFrom: string
   purchaseDate: string
-  shippingTimeInDays: number
+  shippingTimeInDays: number | null
   quantity: Quantity
-  totalPrice: number
-  pricePerPound: number
-  germinationTestDate: number
-  germinationPercent: number
+  totalPrice: number | null
+  pricePerPound: number | null
+  germinationTestDate: number | null
+  germinationPercent: number | null
 }
 
 export interface DailyEnvironmentalConditions {
   temperatureUnit: 'f' | 'c'
-  temperatureLow: number
-  temperatureHigh: number
-  humidityLow: number
-  humidityHigh: number
+  temperatureLow: number | null
+  temperatureHigh: number | null
+  humidityLow: number | null
+  humidityHigh: number | null
   hadFan: boolean
   notes: string[]
 }
@@ -49,7 +50,7 @@ export interface DailyEnvironmentalConditions {
 export interface DailyWaterUsage {
   wateringMethod: string
   dateTime: string
-  quantity: number
+  quantity: number | null
   units: Units
   hadNutrients: boolean
   notes: string[]
