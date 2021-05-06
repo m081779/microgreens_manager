@@ -5,6 +5,9 @@ const seedBatchSchema = new Schema({
 	purchasedFrom: {
 		type: String,
 	},
+	brand: {
+		type: String,
+	},
 	seedType: {
 		type: String,
 	},
