@@ -1,5 +1,5 @@
+const DailyEnvironmentalConditions = require('../models/dailyEnvironmentalConditions')
 const GrowCycle = require('../models/growCycle')
-const SeedBatch = require('../models/seedBatch')
 
 module.exports = {
     createNewGrowCycle: function (req, res) {
@@ -18,11 +18,17 @@ module.exports = {
             .catch(err => res.json(err))
     },
     getAllGrowCycles: function (req, res) {
-        GrowCycle.find({})
+        GrowCycle
+            .find({})
+            .populate('seedBatch')
+            .populate('dailyWaterUsage')
+            .populate('dailyEnvironmentalConditions')
+            .populate('dailyEnvironmentalConditions')
+            .populate('dailyGrowNotes')
             .then(result => {
                 res.status(200).json(result)
             })
-            .catch(err => res.json(err))
+            .catch(err => console.log(err))
     },
     searchGrowCycles: function (req, res) {
         const searchObject = req.body;
@@ -42,6 +48,24 @@ module.exports = {
     updateOneGrowCycle: function (req, res) {
         const { id, data } = req.body;
         GrowCycle.findOneAndUpdate({ _id: id }, { ...data }, { new: true })
+            .populate('seedBatch')
+            .populate('dailyWaterUsage')
+            .populate('dailyEnvironmentalConditions')
+            .populate('dailyEnvironmentalConditions')
+            .populate('dailyGrowNotes')
+            .then(result => {
+                res.status(200).json(result)
+            })
+            .catch(err => res.json(err))
+    },
+    updateAllGrowCycles: function (req, res) {
+        const { idArray, payload } = req.body;
+        GrowCycle.updateMany(
+            {
+                _id: { "$in": idArray }
+            },
+            payload,
+            { "multi": true })
             .then(result => {
                 res.status(200).json(result)
             })

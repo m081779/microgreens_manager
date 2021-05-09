@@ -97,6 +97,11 @@ module.exports = {
     '~/serverMiddleware/createNewGrowCycle',
     '~/serverMiddleware/getAllSeedBatches',
     '~/serverMiddleware/createNewSeedBatch',
+    '~/serverMiddleware/createNewDailyWaterUsage',
+    '~/serverMiddleware/updateOneGrowCycle',
+    '~/serverMiddleware/updateAllGrowCycles',
+    '~/serverMiddleware/createNewDailyEnvironmentalConditions',
+    '~/serverMiddleware/createNewDailyGrowNotes',
   ],
 
 }

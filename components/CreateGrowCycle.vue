@@ -8,7 +8,6 @@
               <v-col>
                 <v-autocomplete
                   v-model="seedType"
-                  :readonly="mode === 'view'"
                   :rules="rules"
                   :items="seedTypes"
                   item-text="name"
@@ -19,7 +18,6 @@
               <v-col>
                 <v-autocomplete
                   v-model="variety"
-                  :readonly="mode === 'view'"
                   :rules="rules"
                   :items="seedVarieties"
                   item-text="name"
@@ -32,16 +30,16 @@
             <v-row>
               <v-col>
                 <v-text-field
-                  v-model="seedBatch"
-                  :readonly="mode === 'view'"
-                  label="Seed Batch"
+                  v-model="startDate"
+                  :rules="rules"
+                  v-mask="'##/##/#### ##:##'"
+                  label="Start Date"
                   hide-details="auto"
                 />
               </v-col>
               <v-col>
                 <v-text-field
                   v-model="numberOfTrays"
-                  :readonly="mode === 'view'"
                   :rules="rules"
                   label="Number of trays"
                   hide-details="auto"
@@ -52,8 +50,7 @@
             <v-row>
               <v-col>
                 <v-text-field
-                  v-model="sowingWeight"
-                  :readonly="mode === 'view'"
+                  v-model="sowingQuantity.amount"
                   :rules="rules"
                   label="Sowing Weight"
                   hide-details="auto"
@@ -61,8 +58,36 @@
               </v-col>
               <v-col>
                 <v-autocomplete
+                  v-model="sowingQuantity.units"
+                  :rules="rules"
+                  :items="units"
+                  item-text="name"
+                  item-value="value"
+                  label="Unit"
+                />
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="soakDurationInHours"
+                  :rules="rules"
+                  label="Soak duration (hours)"
+                  hide-details="auto"
+                />
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="weightUsed"
+                  :rules="rules"
+                  label="Weight used"
+                  hide-details="auto"
+                />
+              </v-col>
+              <v-col>
+                <v-autocomplete
                   v-model="seedMedium"
-                  :readonly="mode === 'view'"
                   :rules="rules"
                   :items="seedMediums"
                   item-text="name"
@@ -74,34 +99,13 @@
 
             <v-row>
               <v-col>
-                <v-text-field
-                  v-model="soakDurationInHours"
-                  :readonly="mode === 'view'"
+                <v-autocomplete
+                  v-model="seedBatch"
                   :rules="rules"
-                  label="Soak duration (hours)"
-                  hide-details="auto"
-                />
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="weightUsed"
-                  :readonly="mode === 'view'"
-                  :rules="rules"
-                  label="Weight used"
-                  hide-details="auto"
-                />
-              </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="startDate"
-                  :readonly="mode === 'view'"
-                  :rules="rules"
-                  v-mask="'##/##/#### ##:##'"
-                  label="Start Date"
-                  hide-details="auto"
+                  :items="seedBatches"
+                  item-text="name"
+                  item-value="value"
+                  label="Seed Batch"
                 />
               </v-col>
             </v-row>
@@ -115,21 +119,7 @@
                   later.
                 </v-alert>
 
-                <v-btn
-                  v-if="mode && mode === 'edit'"
-                  :disabled="success"
-                  @click="submitForm"
-                  color="green"
-                >
-                  <v-icon>{{ mdiSendCheck }}</v-icon>
-                  &nbsp; Submit
-                </v-btn>
-                <v-btn
-                  v-if="!mode"
-                  :disabled="success"
-                  @click="submitForm"
-                  color="green"
-                >
+                <v-btn :disabled="success" @click="submitForm" color="green">
                   <v-icon>{{ mdiSproutOutline }}</v-icon>
                   &nbsp; click to create
                 </v-btn>
@@ -148,27 +138,21 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, namespace, State } from 'nuxt-property-decorator'
-// import { MetaInfo } from 'vue-meta'
-
-// import type { RootState } from '../store'
-// import {
-// 	namespace as settingStoreNamespace,
-// 	SettingState,
-// 	actionType,
-// } from '../store/setting'
 import axios from 'axios'
 import {
   GrowCycle,
   SeedBatch,
   SeedTypes,
   Varieties,
-  Units
+  Units,
+  Quantity
 } from '~/types/types'
 // const seedTypes = require('../assets/seedTypes.json')
 import seedTypes from '~/assets/seedTypes'
 import varieties from '~/assets/varieties'
 import seedMediums from '~/assets/seedMediums'
 import harvestMethods from '~/assets/harvestMethods'
+import units from '~/assets/units'
 import moment from 'moment'
 import { mdiPlusThick, mdiSproutOutline, mdiSendCheck } from '@mdi/js'
 
@@ -186,6 +170,7 @@ export default class CreateGrowCycle extends Vue {
   public varieties = varieties
   public seedMediums = seedMediums
   public harvestMethods = harvestMethods
+  public units = units
 
   public growCycles = [] as GrowCycle[]
 
@@ -193,7 +178,10 @@ export default class CreateGrowCycle extends Vue {
   public variety = ''
   public seedBatch = ''
   public numberOfTrays = null
-  public sowingWeight = null
+  public sowingQuantity = {
+    amount: null,
+    units: '' as Units
+  } as Quantity
   public seedMedium = ''
   public soakDurationInHours = null
   public weightUsed = 'paver'
@@ -201,6 +189,22 @@ export default class CreateGrowCycle extends Vue {
   // public didStackTrays = ''
 
   rules = [(v: any) => !!v || 'Required']
+
+  public get seedBatches () {
+    let filteredBatches: any[] = []
+    if (this.seedType && this.variety) {
+      this.$store.dispatch('seedBatch/getSeedBatchesBySeedType', {
+        seedType: this.seedType,
+        variety: this.variety,
+        seedBatches: this.$store.state.seedBatch.seedBatches
+      })
+      filteredBatches = this.$store.state.seedBatch.filteredBatches.map((batch: SeedBatch) => ({
+        name: `${batch.brand} (${batch.seedType} - ${batch.variety}) ${moment(batch.purchaseDate).format('L')}`,
+        value: batch._id
+      }));
+    }
+    return this.seedType && this.variety ? filteredBatches : [{ name: 'Please Choose a seed type and variety' }]
+  }
 
   public get seedVarieties () {
     return this.seedType
@@ -212,12 +216,9 @@ export default class CreateGrowCycle extends Vue {
     const newGrowCycle: GrowCycle = {
       seedType: this.seedType as SeedTypes,
       variety: this.variety,
-      // seedBatch: (this.seedBatch as unknown) as SeedBatch,
+      seedBatch: this.seedBatch,
       numberOfTrays: +this.numberOfTrays!,
-      sowingWeight: {
-        amount: this.sowingWeight || 0,
-        unit: 'grams'
-      },
+      sowingWeight: this.sowingQuantity,
       seedMedium: this.seedMedium,
       soakDurationInHours: +this.soakDurationInHours!,
       weightUsed: this.weightUsed,
@@ -226,11 +227,11 @@ export default class CreateGrowCycle extends Vue {
       daysToHarvest: 10,
       harvestWeight: {
         amount: null,
-        unit: '' as Units
+        units: '' as Units
       },
       didStackTrays: true,
       dailyLightDurationInHours: 16,
-      startDate: '2021-05-02T03:44:47.492Z',
+      startDate: moment(this.startDate).format('MM/DD/YYYY HH:mm'),
       harvestDate: '',
       harvestMethod: '',
       completed: false,

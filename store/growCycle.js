@@ -3,7 +3,11 @@ export const state = () => ({
 })
 
 export const mutations = {
-	add(state, growCycles) {
-		state.growCycles = growCycles
+	addGrowCycles(state, growCycles) {
+		if (Array.isArray(growCycles)) {
+			state.growCycles = [...growCycles]
+		} else {
+			state.growCycles = [...state.growCycles, ...growCycles]
+		}
 	},
 }

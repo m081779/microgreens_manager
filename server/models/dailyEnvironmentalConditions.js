@@ -17,6 +17,10 @@ const dailyEnvironmentalConditionsSchema = new Schema({
     humidityHigh: {
         type: Number,
     },
+    dateTime: {
+        type: String,
+        default: new Date(Date.now()),
+    },
     hadFan: {
         type: Boolean,
         default: true,

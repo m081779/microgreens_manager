@@ -1,7 +1,12 @@
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Schema.Types.ObjectId
+
 export interface GrowCycle {
+  _id?: typeof ObjectId;
   seedType?: SeedTypes
   variety?: string
-  seedBatch?: SeedBatch
+  seedBatch?: typeof ObjectId
+
   numberOfTrays?: number | null
   sowingWeight?: Quantity
   seedMedium?: string
@@ -18,23 +23,25 @@ export interface GrowCycle {
   startDate?: string
   harvestDate?: string
   harvestMethod?: string
-  dailyEnvironmentalConditions?: DailyEnvironmentalConditions[]
-  dailyWaterUsage?: DailyWaterUsage[]
-  dailyGrowNotes?: DailyGrowNotes[]
+  dailyEnvironmentalConditions?: typeof ObjectId
+  dailyWaterUsage?: typeof ObjectId
+  dailyGrowNotes?: typeof ObjectId
 }
 
 export interface SeedBatch {
-  seedType: SeedTypes
-  variety: Varieties
-  brand: string
-  purchasedFrom: string
-  purchaseDate: string
-  shippingTimeInDays: number | null
-  quantity: Quantity
-  totalPrice: number | null
-  pricePerPound: number | null
-  germinationTestDate: number | null
-  germinationPercent: number | null
+  _id?: typeof ObjectId
+  seedType?: SeedTypes
+  variety?: Varieties
+  brand?: string
+  purchasedFrom?: string
+  purchaseDate?: string
+  shippingTimeInDays?: number | null
+  quantity?: Quantity
+  totalPrice?: number | null
+  pricePerPound?: number | null
+  germinationTestDate?: number | null
+  germinationPercent?: number | null
+  isUsedUp?: boolean
 }
 
 export interface DailyEnvironmentalConditions {
@@ -43,27 +50,29 @@ export interface DailyEnvironmentalConditions {
   temperatureHigh: number | null
   humidityLow: number | null
   humidityHigh: number | null
+  dateTime: string
   hadFan: boolean
-  notes: string[]
+  notes: string
 }
 
 export interface DailyWaterUsage {
-  wateringMethod: string
+  wateringMethod: WaterMethod
   dateTime: string
   quantity: number | null
   units: Units
   hadNutrients: boolean
-  notes: string[]
+  notes: string
 }
 
 export interface DailyGrowNotes {
-  note: string
+  _id: typeof ObjectId
+  message: string
   dateTime: string
 }
 
 export interface Quantity {
   amount: number | null
-  unit: Units
+  units: Units
 }
 
 export type SeedTypes =
@@ -84,5 +93,7 @@ export type Varieties =
 export type SeedMedium = 'Coco coir' | 'kratke' | 'promix'
 
 export type HarvestMethod = 'knife' | 'scissors'
+
+export type WaterMethod = 'top water' | 'bottom water' | 'root mist' | 'foliar'
 
 export type Units = 'ounces' | 'cups' | 'pounds' | 'grams' | 'millileters'

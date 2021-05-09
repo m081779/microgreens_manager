@@ -30,6 +30,14 @@
             <v-row>
               <v-col>
                 <v-text-field
+                  v-model="brand"
+                  :rules="rules"
+                  label="Brand Name"
+                  hide-details="auto"
+                />
+              </v-col>
+              <v-col>
+                <v-text-field
                   v-model="purchasedFrom"
                   :rules="rules"
                   label="Purchased From"
@@ -183,7 +191,7 @@ export default class CreateSeedBatch extends Vue {
   public shippingTimeInDays = null
   public quantity = {
     amount: null,
-    unit: '' as Units
+    units: '' as Units
   } as Quantity
   public totalPrice = null
   public pricePerPound = null
@@ -210,7 +218,8 @@ export default class CreateSeedBatch extends Vue {
       totalPrice: this.totalPrice,
       pricePerPound: this.quantity.amount! / this.totalPrice!,
       germinationTestDate: this.germinationTestDate,
-      germinationPercent: this.germinationPercent
+      germinationPercent: this.germinationPercent,
+      isUsedUp: false
     }
     await axios
       .post('/api/createNewSeedBatch', newSeedBatch)

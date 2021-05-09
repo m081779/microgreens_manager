@@ -10,7 +10,7 @@ const growCycleSchema = new Schema({
     },
     seedBatch: {
         type: Schema.Types.ObjectId,
-        ref: "seedBatch",
+        ref: "SeedBatch",
     },
     numberOfTrays: {
         type: Number,
@@ -79,19 +79,19 @@ const growCycleSchema = new Schema({
     dailyEnvironmentalConditions: [
         {
             type: Schema.Types.ObjectId,
-            ref: "dailyEnvironmentalConditions"
+            ref: "DailyEnvironmentalConditions"
         }
     ],
     dailyWaterUsage: [
         {
             type: Schema.Types.ObjectId,
-            ref: "dailyWaterUsage"
+            ref: "DailyWaterUsage"
         }
     ],
     dailyGrowNotes: [
         {
             type: Schema.Types.ObjectId,
-            ref: "dailyGrowNotes"
+            ref: "DailyGrowNotes"
         }
     ]
 });

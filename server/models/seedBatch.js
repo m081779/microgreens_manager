@@ -40,6 +40,9 @@ const seedBatchSchema = new Schema({
 	germinationPercent: {
 		type: Number,
 	},
+	isUsedUp: {
+		type: Boolean,
+	}
 });
 
 const SeedBatch = module.exports = mongoose.model('SeedBatch', seedBatchSchema);

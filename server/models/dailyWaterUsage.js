@@ -6,8 +6,8 @@ const dailyWaterUsageSchema = new Schema({
         type: String,
     },
     dateTime: {
-        type: Date,
-        default: Date.now(),
+        type: String,
+        default: new Date(Date.now()),
     },
     quantity: {
         type: Number,
@@ -18,7 +18,9 @@ const dailyWaterUsageSchema = new Schema({
     hadNutrients: {
         type: Boolean,
     },
-    notes: [String]
+    notes: {
+        type: String,
+    }
 });
 
 const DailyWaterUsage = (module.exports = mongoose.model('DailyWaterUsage', dailyWaterUsageSchema))
