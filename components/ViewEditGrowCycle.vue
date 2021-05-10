@@ -351,10 +351,7 @@ export default class ViewEditGrowCycle extends Vue {
 
 	public get dailyGrowNotes() {
 		let dailyGrowNotes = this.growCycle && this.growCycle.dailyGrowNotes && this.growCycle.dailyGrowNotes || [];
-		if (dailyGrowNotes.length > 0) {
-			dailyGrowNotes =  dailyGrowNotes.map((note: DailyGrowNotes) => note.message ? `${moment(note.dateTime).format('MM/DD/YYYY HH:mm')} - ${note.message}` : '')
-		}
-		return dailyGrowNotes;
+		return dailyGrowNotes.map((note: DailyGrowNotes) => note.message ? `${moment(note.dateTime).format('MM/DD/YYYY HH:mm')} - ${note.message}` : '')
 	}
 
 	public get dailyGrowNoteIds() {
@@ -397,16 +394,10 @@ export default class ViewEditGrowCycle extends Vue {
 		await axios
 			.put('/api/updateOneGrowCycle', payload)
 			.then(result => {
-				console.log('result: ', result);
-				let growCycles = [ ...this.$store.state.growCycle.growCycles ];
-				growCycles = growCycles.map(growCycle => {
-					if (growCycle._id === result.data._id) {
-						return result.data;
-					}
-					return growCycle;
-				})
-				this.$store.commit('growCycle/addGrowCycles', growCycles)
-				// Object.assign(this, result.data)
+				const { growCycles } = this.$store.state.growCycle;
+				// update array of growCycles with the updated growCycle, and then add it to the store
+				const updatedGrowCycles = growCycles.map((growCycle: GrowCycle) => growCycle._id === result.data._id ? result.data : growCycle);
+				this.$store.commit('growCycle/addGrowCycles', updatedGrowCycles)
 			})
 			.catch(error => console.log('error from updateOneGrowCycle front end', error))
 	}
