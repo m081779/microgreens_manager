@@ -32,7 +32,6 @@
 					/>
 				</v-col>
 			</v-row>
-
 			<v-row>
 				<v-col>
 					<v-text-field
@@ -58,8 +57,6 @@
 					/>
 				</v-col>
 			</v-row>
-
-
 			<v-row>
 				<v-col>
 				<v-text-field
@@ -132,6 +129,7 @@ export default class CreateEnvironmentalConditionsEntry extends Vue {
 	public notes = '';
 
 	public dailyEnvironmentalEntryId = '';
+	
 
 
 	rules = [(v: any) => !!v || 'Required'];
@@ -155,19 +153,35 @@ export default class CreateEnvironmentalConditionsEntry extends Vue {
 			.post('/api/createNewDailyEnvironmentalConditions', newEnvironmentalConditions)
 			.then(async (result) => {
 				this.dailyEnvironmentalEntryId = result.data._id;
-				await this.updateAllGrowCycles()
+				await this.updateAllGrowCycles(newEnvironmentalConditions)
 			})
 			.catch(error =>
 			console.log('error from createDailyEnvironmentalConditions front end', error)
 			)
 	}
 
-	public async updateAllGrowCycles() {
-		const payload = { idArray: [ ...this.growCycleIds ], payload: {dailyEnvironmentalConditions: [...this.growCycles[0].dailyEnvironmentalConditions, this.dailyEnvironmentalEntryId]}};
+	public async updateAllGrowCycles(newEnvironmentalConditions: DailyEnvironmentalConditions) {
+		const payload = { 
+			idArray: [ ...this.growCycleIds ], 
+			payload: {
+				dailyEnvironmentalConditions: [...this.growCycles[0].dailyEnvironmentalConditions, this.dailyEnvironmentalEntryId]
+			}
+		};
 		await axios
 			.put('/api/updateAllGrowCycles', payload)
 			.then(result => {
-			}).catch(error => console.log('error from updateAllGrowCycles front end', error))
+				const growCycles = [ ...this.$store.state.growCycle.growCycles ];
+				// // update array of growCycles with the updated information, and then add it to the store
+				const updatedGrowCycles = growCycles
+											.filter((growCycle: GrowCycle) => this.growCycleIds.includes(growCycle._id))
+											.map((growCycle: GrowCycle) => ({
+												...growCycle,
+												dailyEnvironmentalConditions: [ ...growCycle.dailyEnvironmentalConditions, newEnvironmentalConditions ]
+											}));
+
+				this.$store.commit('growCycle/addGrowCycles', updatedGrowCycles)
+			})
+			.catch(error => console.log('error from updateAllGrowCycles front end', error))
 
 	}
 

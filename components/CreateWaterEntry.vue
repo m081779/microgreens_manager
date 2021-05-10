@@ -165,7 +165,12 @@ export default class CreateWaterEntry extends Vue {
 		await axios
 			.put('/api/updateOneGrowCycle', payload)
 			.then(result => {
-			}).catch(error => console.log('error from updateOneGrowCycle front end', error))
+				const { growCycles } = this.$store.state.growCycle;
+				// update array of growCycles with the updated growCycle, and then add it to the store
+				const updatedGrowCycles = growCycles.map((growCycle: GrowCycle) => growCycle._id === result.data._id ? result.data : growCycle);
+				this.$store.commit('growCycle/addGrowCycles', updatedGrowCycles)
+			})
+			.catch(error => console.log('error from updateOneGrowCycle front end', error))
 
 	}
 
