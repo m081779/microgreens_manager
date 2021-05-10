@@ -346,7 +346,7 @@ export default class ViewEditGrowCycle extends Vue {
 	public didStackTrays = this.growCycle && this.growCycle.didStackTrays || null;
 	public completed = this.growCycle && this.growCycle.completed || false;
 	public dailyGrowNote = '';
-	public noteId = '';
+	public noteId = undefined;
 	public verifiedComplete =  false;
 
 	public get dailyGrowNotes() {
@@ -387,8 +387,11 @@ export default class ViewEditGrowCycle extends Vue {
 				percentageIncreaseOverSeedWeight: this.percentageIncreaseOverSeedWeight,
 				didStackTrays: this.didStackTrays,
 				completed: this.completed,
-				dailyGrowNotes: [ ...this.dailyGrowNoteIds, this.noteId],
+				dailyGrowNotes: [ ...this.dailyGrowNoteIds],
 			}
+		}
+		if (this.noteId) {
+			payload.data.dailyGrowNotes.push(this.noteId)
 		}
 		
 		await axios
