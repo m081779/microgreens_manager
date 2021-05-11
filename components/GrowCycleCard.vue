@@ -1,7 +1,7 @@
 <template>
-	<v-card class="" max-width="1000" color="green">
-		<v-toolbar color="green">
-			<v-toolbar-title>{{ `${growCycle.seedType} - ${growCycle.variety}` }}</v-toolbar-title>
+	<v-card class="" max-width="1000" >
+		<v-toolbar color="green" dense>
+			<v-toolbar-title>{{ `${capitalize(growCycle.seedType)} - ${capitalize(growCycle.variety)}` }}</v-toolbar-title>
 				<v-spacer/>
 				<v-btn icon dark @click="deleteGrowCycle">
 					<v-icon>mdi-close</v-icon>
@@ -9,15 +9,15 @@
 		</v-toolbar>
 		<v-card-text>
 			
-			<h3 class="text--primary">Start Date: {{ growCycle.startDate }}</h3>
-			<h3 class="text--primary">Duration: {{ growCycleDuration }}</h3>
-			<h3 class="text--primary">
+			<h3>Start Date: {{ growCycle.startDate }}</h3>
+			<h3>Duration: {{ growCycleDuration }}</h3>
+			<h3>
 				Number of trays: {{ growCycle.numberOfTrays }}
 			</h3>
-			<h3 class="text--primary">
+			<h3>
 				Soak time: {{ growCycle.soakDurationInHours }} hours
 			</h3>
-			<h3 class="text--primary">Growing medium: {{ growCycle.seedMedium }}</h3>
+			<h3>Growing medium: {{ growCycle.seedMedium }}</h3>
 		</v-card-text>
 		<v-card-actions>
 			<v-dialog
@@ -29,6 +29,7 @@
 				
 					<v-btn
 						@click="selectGrowCycle(growCycle)"
+						class="no_radius left-radius"
 						color="purple"
 					>
 						<v-icon>{{ mdiEye }}</v-icon>
@@ -37,6 +38,7 @@
 
 					<v-btn
 						@click="setMode('edit')"
+						class="no_radius"
 						color="orange"
 						v-bind="attrs"
 						v-on="on"
@@ -47,7 +49,7 @@
 				</template>
 				<v-card>
 					<v-toolbar dark color="green">
-						<v-toolbar-title>View / edit grow cycle</v-toolbar-title>
+						<v-toolbar-title>Edit grow cycle</v-toolbar-title>
 						<v-spacer></v-spacer>
 						<v-btn icon dark @click="viewEditModal = false">
 						<v-icon>mdi-close</v-icon>
@@ -66,6 +68,7 @@
 				<template v-slot:activator="{ on, attrs }">
 					<v-btn 
 						color="blue"
+						class="no_radius right-radius"
 						v-bind="attrs"
 						v-on="on"
 					>
@@ -88,7 +91,20 @@
 	</v-card>
 </template>
 
-<style lang="sass" scoped></style>
+<style lang="scss" scoped>
+button.no_radius.v-btn {
+	border-radius: 0 !important;
+}
+
+button.no_radius.v-btn.left-radius {
+	border-top-left-radius: 4px !important;
+	border-bottom-left-radius: 4px !important;
+}
+button.no_radius.v-btn.right-radius {
+	border-top-right-radius: 4px !important;
+	border-bottom-right-radius: 4px !important;
+}
+</style>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
@@ -101,7 +117,8 @@ import {
 } from '@mdi/js'
 import ViewEditGrowCycle from '~/components/ViewEditGrowCycle.vue'
 import CreateWaterEntry from '~/components/CreateWaterEntry.vue'
-import convertMiliseconds from '~/helpers/convertMilliseconds'
+import convertMilliseconds from '~/helpers/convertMilliseconds'
+import capitalize from '~/helpers/capitalize'
 import axios from 'axios';
 @Component({
   components: {
@@ -121,6 +138,8 @@ export default class GrowCycleCard extends Vue {
 	public mdiWateringCanOutline = mdiWateringCanOutline
 	public mdiThermometerPlus = mdiThermometerPlus
 
+	public capitalize = capitalize;
+
 
 	public viewEditModal = false
 	public wateringEntryModal = false
@@ -130,7 +149,7 @@ export default class GrowCycleCard extends Vue {
 		const startDate: any = new Date(this.growCycle.startDate as string)
 		const today: any = new Date(Date.now())
 		const difference = today - startDate
-		const { d, h, m } = convertMiliseconds(difference)
+		const { d, h, m } = convertMilliseconds(difference)
 
 		return `${d}d:${h}h:${m}m`
 	}

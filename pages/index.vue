@@ -171,7 +171,11 @@ export default class Index extends Vue {
 	}
 
 	public get growCycles () {
-		return this.$store.state.growCycle.growCycles;
+		return this.$store.state.growCycle.growCycles.map((cycle: GrowCycle) => ({
+			...cycle,
+			startDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm'),
+			harvestDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm'),
+		}));
 	}
 	public set growCycles (growCycles: GrowCycle[]) {
 		this.$store.commit('growCycle/addGrowCycles', growCycles);
@@ -217,7 +221,8 @@ export default class Index extends Vue {
 			.then(result => {
 				this.growCycles = (result.data as GrowCycle[]).map(cycle => ({
 				...cycle,
-				startDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm')
+				startDate: moment(cycle.startDate).format('MM/DD/YYYY HH:mm'),
+				harvestDate: moment(cycle.harvestDate).format('MM/DD/YYYY HH:mm')
 				}));
 			})
 			.catch(error => console.log('error from getGrowCycles'));
