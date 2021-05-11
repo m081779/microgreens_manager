@@ -25,7 +25,7 @@ const dailyEnvironmentalConditionsSchema = new Schema({
         type: Boolean,
         default: true,
     },
-    notes: [String]
+    notes: String
 });
 
 const DailyEnvironmentalConditions = (module.exports = mongoose.model('DailyEnvironmentalConditions', dailyEnvironmentalConditionsSchema))
