@@ -20,7 +20,7 @@
 						v-model="dateTime"
 						:rules="rules"
 						v-mask="'##/##/#### ##:##'"
-						label="Time of watering"
+						label="Date/time of watering"
 						hide-details="auto"
 					/>
 				</v-col>
