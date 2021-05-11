@@ -102,6 +102,8 @@ module.exports = {
     '~/serverMiddleware/updateAllGrowCycles',
     '~/serverMiddleware/createNewDailyEnvironmentalConditions',
     '~/serverMiddleware/createNewDailyGrowNotes',
+    '~/serverMiddleware/deleteGrowCycle',
+
   ],
 
 }

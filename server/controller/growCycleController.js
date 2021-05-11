@@ -1,5 +1,4 @@
-const DailyEnvironmentalConditions = require('../models/dailyEnvironmentalConditions')
-const GrowCycle = require('../models/growCycle')
+const GrowCycle = require('../models/growCycle');
 
 module.exports = {
     createNewGrowCycle: function (req, res) {
@@ -39,7 +38,10 @@ module.exports = {
             .catch(err => res.json(err))
     },
     deleteGrowCycle: function (req, res) {
-        GrowCycle.deleteOne({ _id: req.params.id })
+        const baseURL = 'http://' + req.headers.host + '/';
+        const params = new URL(req.url, baseURL).searchParams;
+        const _id = params.get('id');
+        GrowCycle.deleteOne({ _id })
             .then(result => {
                 res.status(200).json(result)
             })
