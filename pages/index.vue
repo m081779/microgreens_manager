@@ -92,7 +92,7 @@
 			</v-dialog>
 			<v-dialog
 				v-model="seedBatchModal"
-				width="900"
+				fullscreen
 				transition="dialog-bottom-transition"
 			>
 				<v-card>

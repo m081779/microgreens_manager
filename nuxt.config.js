@@ -5,7 +5,7 @@ const serveStatic = require('serve-static');
 module.exports = {
   telemetry: false,
   generate: {
-    dir: 'public'
+    dir: 'dist'
   },
   /*
   ** Headers of the page

@@ -6,7 +6,10 @@ const varieties = {
     { name: 'Hard White', value: 'hard white' },
     { name: 'Hard Red', value: 'hard red' }
   ],
-  broccoli: [{ name: 'Some variety', value: 'some variety' }]
+  broccoli: [
+    { name: 'Calabrese', value: 'calabrese' },
+    { name: 'Waltham 29', value: 'waltham 29' }
+  ]
 }
 
 export default varieties
